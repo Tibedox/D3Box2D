@@ -20,6 +20,7 @@ public class StaticBody {
         bodyDef.position.set(x, y);
 
         Body body = world.createBody(bodyDef);
+
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(width/2, height/2);
 
