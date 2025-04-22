@@ -19,6 +19,7 @@ public class Main extends ApplicationAdapter {
     private Box2DDebugRenderer debugRenderer;
 
     KinematicBody platform;
+    KinematicBodyCross cross;
 
     @Override
     public void create() {
@@ -46,13 +47,15 @@ public class Main extends ApplicationAdapter {
             triangles[i] = new DynamicBodyTriangle(world, 10, 5+i, 0.5f, 0.5f);
         }
 
-        platform = new KinematicBody(world, 0, 3, 4, 0.6f);
+        platform = new KinematicBody(world, 0, 1.5f, 4, 0.6f);
+        cross = new KinematicBodyCross(world, 0, 5, 4, 0.5f);
     }
 
     @Override
     public void render() {
         // события
         platform.move();
+        cross.move();
 
         // отрисовка
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
