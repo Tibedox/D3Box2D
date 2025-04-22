@@ -37,9 +37,12 @@ public class Main extends ApplicationAdapter {
         }
         DynamicBodyBox[] boxes = new DynamicBodyBox[100];
         for (int i = 0; i < boxes.length; i++) {
-            boxes[i] = new DynamicBodyBox(world, 6, 5+i, 0.8f, 0.4f);
+            boxes[i] = new DynamicBodyBox(world, 6, 5+i, 0.6f, 0.3f);
         }
-
+        DynamicBodyTriangle[] triangles = new DynamicBodyTriangle[100];
+        for (int i = 0; i < triangles.length; i++) {
+            triangles[i] = new DynamicBodyTriangle(world, 10, 5+i, 0.5f, 0.5f);
+        }
     }
 
     @Override
