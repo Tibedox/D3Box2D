@@ -24,9 +24,10 @@ public class Main extends ApplicationAdapter {
 
     KinematicBody platform;
     KinematicBodyCross cross;
-    DynamicBodyCircle[] balls = new DynamicBodyCircle[10];
-    DynamicBodyBox[] boxes = new DynamicBodyBox[10];
-    DynamicBodyTriangle[] triangles = new DynamicBodyTriangle[10];
+    DynamicBodyCircle[] balls = new DynamicBodyCircle[1];
+    DynamicBodyBox[] boxes = new DynamicBodyBox[4];
+    DynamicBodyBox box;
+    //DynamicBodyTriangle[] triangles = new DynamicBodyTriangle[10];
 
     @Override
     public void create() {
@@ -43,13 +44,15 @@ public class Main extends ApplicationAdapter {
         StaticBody wall2 = new StaticBody(world, 15, 4.5f, 0.4f, 7);
 
 
-        for (int i = 0; i < balls.length; i++) {
+        /*for (int i = 0; i < balls.length; i++) {
             balls[i] = new DynamicBodyCircle(world, 8+MathUtils.random(-0.1f, 0.1f), 5+i, 0.3f);
-        }
+        }*/
+        balls[0] = new DynamicBodyCircle(world, 2, 5, 0.3f);
+        box = new DynamicBodyBox(world, 2, 4, 1, 1);
         for (int i = 0; i < boxes.length; i++) {
-            boxes[i] = new DynamicBodyBox(world, 6, 5+i, 0.6f, 0.3f);
+            boxes[i] = new DynamicBodyBox(world, 12, 5+i, 0.3f, 0.8f);
         }
-        for (int i = 0; i < triangles.length; i++) {
+        /*for (int i = 0; i < triangles.length; i++) {
             triangles[i] = new DynamicBodyTriangle(world, 10, 5+i, 0.5f, 0.5f);
         }
 
@@ -121,7 +124,7 @@ public class Main extends ApplicationAdapter {
                 touchUpPos.set(screenX, screenY, 0);
                 camera.unproject(touchUpPos);
                 Vector3 swapPos = new Vector3(touchUpPos).sub(touchDownPos);
-                bodyTouched.applyLinearImpulse(new Vector2(swapPos.x, swapPos.y), bodyTouched.getPosition(), true);
+                bodyTouched.applyLinearImpulse(new Vector2(-swapPos.x, -swapPos.y), bodyTouched.getPosition(), true);
             }
             return false;
         }
