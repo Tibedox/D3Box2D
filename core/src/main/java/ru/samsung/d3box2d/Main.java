@@ -1,10 +1,14 @@
 package ru.samsung.d3box2d;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -20,6 +24,9 @@ public class Main extends ApplicationAdapter {
 
     KinematicBody platform;
     KinematicBodyCross cross;
+    DynamicBodyCircle[] balls = new DynamicBodyCircle[10];
+    DynamicBodyBox[] boxes = new DynamicBodyBox[10];
+    DynamicBodyTriangle[] triangles = new DynamicBodyTriangle[10];
 
     @Override
     public void create() {
@@ -29,33 +36,32 @@ public class Main extends ApplicationAdapter {
         Box2D.init();
         world = new World(new Vector2(0, -10), true);
         debugRenderer = new Box2DDebugRenderer();
+        Gdx.input.setInputProcessor(new MyInputProcessor());
 
         StaticBody floor = new StaticBody(world, 8, 0.5f, 15.5f, 0.4f);
         StaticBody wall1 = new StaticBody(world, 1, 4.5f, 0.4f, 7);
         StaticBody wall2 = new StaticBody(world, 15, 4.5f, 0.4f, 7);
 
-        DynamicBodyCircle[] ball = new DynamicBodyCircle[100];
-        for (int i = 0; i < ball.length; i++) {
-            ball[i] = new DynamicBodyCircle(world, 8+MathUtils.random(-0.1f, 0.1f), 5+i, 0.3f);
+
+        for (int i = 0; i < balls.length; i++) {
+            balls[i] = new DynamicBodyCircle(world, 8+MathUtils.random(-0.1f, 0.1f), 5+i, 0.3f);
         }
-        DynamicBodyBox[] boxes = new DynamicBodyBox[100];
         for (int i = 0; i < boxes.length; i++) {
             boxes[i] = new DynamicBodyBox(world, 6, 5+i, 0.6f, 0.3f);
         }
-        DynamicBodyTriangle[] triangles = new DynamicBodyTriangle[100];
         for (int i = 0; i < triangles.length; i++) {
             triangles[i] = new DynamicBodyTriangle(world, 10, 5+i, 0.5f, 0.5f);
         }
 
-        platform = new KinematicBody(world, 0, 1.5f, 4, 0.6f);
-        cross = new KinematicBodyCross(world, 0, 5, 4, 0.5f);
+        /*platform = new KinematicBody(world, 0, 1.5f, 4, 0.6f);
+        cross = new KinematicBodyCross(world, 0, 5, 4, 0.5f);*/
     }
 
     @Override
     public void render() {
         // события
-        platform.move();
-        cross.move();
+        /*platform.move();
+        cross.move();*/
 
         // отрисовка
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
@@ -69,5 +75,70 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         batch.dispose();
+    }
+
+    class MyInputProcessor implements InputProcessor{
+        Vector3 touchDownPos = new Vector3();
+        Vector3 touchUpPos = new Vector3();
+        Body bodyTouched;
+
+        @Override
+        public boolean keyDown(int keycode) {
+            return false;
+        }
+
+        @Override
+        public boolean keyUp(int keycode) {
+            return false;
+        }
+
+        @Override
+        public boolean keyTyped(char character) {
+            return false;
+        }
+
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            touchDownPos.set(screenX, screenY, 0);
+            camera.unproject(touchDownPos);
+            bodyTouched = null;
+            for (DynamicBodyCircle b: balls) {
+                if(b.hit(touchDownPos)){
+                    bodyTouched = b.body;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+            if(bodyTouched!=null) {
+                touchUpPos.set(screenX, screenY, 0);
+                camera.unproject(touchUpPos);
+                Vector3 swapPos = new Vector3(touchUpPos).sub(touchDownPos);
+                bodyTouched.applyLinearImpulse(new Vector2(swapPos.x, swapPos.y), balls[0].body.getPosition(), true);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean touchDragged(int screenX, int screenY, int pointer) {
+            return false;
+        }
+
+        @Override
+        public boolean mouseMoved(int screenX, int screenY) {
+            return false;
+        }
+
+        @Override
+        public boolean scrolled(float amountX, float amountY) {
+            return false;
+        }
     }
 }
