@@ -107,6 +107,11 @@ public class Main extends ApplicationAdapter {
                     bodyTouched = b.body;
                 }
             }
+            for (DynamicBodyBox b: boxes) {
+                if(b.hit(touchDownPos)){
+                    bodyTouched = b.body;
+                }
+            }
             return false;
         }
 
@@ -116,7 +121,7 @@ public class Main extends ApplicationAdapter {
                 touchUpPos.set(screenX, screenY, 0);
                 camera.unproject(touchUpPos);
                 Vector3 swapPos = new Vector3(touchUpPos).sub(touchDownPos);
-                bodyTouched.applyLinearImpulse(new Vector2(swapPos.x, swapPos.y), balls[0].body.getPosition(), true);
+                bodyTouched.applyLinearImpulse(new Vector2(swapPos.x, swapPos.y), bodyTouched.getPosition(), true);
             }
             return false;
         }
