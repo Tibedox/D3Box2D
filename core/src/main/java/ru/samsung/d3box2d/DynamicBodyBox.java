@@ -4,9 +4,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 public class DynamicBodyBox {
     public float x, y;
@@ -40,8 +42,10 @@ public class DynamicBodyBox {
     }
 
     public boolean hit(Vector3 t){
-        x = body.getPosition().x;
-        y = body.getPosition().y;
-        return t.x > x-width/2 && t.x < x+width/2 && t.y > y-height/2 && t.y<y+height/2;
+        Array<Fixture> fixtures = body.getFixtureList();
+        for(Fixture f: fixtures){
+            return f.testPoint(t.x, t.y);
+        }
+        return false;
     }
 }

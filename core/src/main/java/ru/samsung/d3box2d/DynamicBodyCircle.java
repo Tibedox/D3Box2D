@@ -1,11 +1,14 @@
 package ru.samsung.d3box2d;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 public class DynamicBodyCircle {
     public float x, y;
@@ -28,7 +31,7 @@ public class DynamicBodyCircle {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.density = 1f;
+        fixtureDef.density = 0.5f;
         fixtureDef.friction = 0.4f;
         fixtureDef.restitution = 0.6f;
 
@@ -38,8 +41,30 @@ public class DynamicBodyCircle {
     }
 
     public boolean hit(Vector3 t){
-        x = body.getPosition().x;
-        y = body.getPosition().y;
-        return (t.x-x)*(t.x-x) + (t.y-y)*(t.y-y) < radius*radius;
+        Array<Fixture> fixtures = body.getFixtureList();
+        for(Fixture f: fixtures){
+            return f.testPoint(t.x, t.y);
+        }
+        return false;
+    }
+
+    public float getX() {
+        return body.getPosition().x-radius;
+    }
+
+    public float getY() {
+        return body.getPosition().y-radius;
+    }
+
+    public float getWidth() {
+        return radius*2;
+    }
+
+    public float getHeight() {
+        return radius*2;
+    }
+
+    public float getAngle() {
+        return body.getAngle() * MathUtils.radiansToDegrees;
     }
 }

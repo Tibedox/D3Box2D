@@ -4,7 +4,9 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -22,12 +24,15 @@ public class Main extends ApplicationAdapter {
     private World world;
     private Box2DDebugRenderer debugRenderer;
 
+    Texture textureAtlas;
+    TextureRegion imgColob;
+
     KinematicBody platform;
     KinematicBodyCross cross;
     DynamicBodyCircle[] balls = new DynamicBodyCircle[1];
     DynamicBodyBox[] boxes = new DynamicBodyBox[4];
     DynamicBodyBox box;
-    //DynamicBodyTriangle[] triangles = new DynamicBodyTriangle[10];
+    DynamicBodyTriangle[] triangles = new DynamicBodyTriangle[2];
 
     @Override
     public void create() {
@@ -38,6 +43,9 @@ public class Main extends ApplicationAdapter {
         world = new World(new Vector2(0, -10), true);
         debugRenderer = new Box2DDebugRenderer();
         Gdx.input.setInputProcessor(new MyInputProcessor());
+
+        textureAtlas = new Texture("colobog.png");
+        imgColob = new TextureRegion(textureAtlas, 0, 0, 100, 100);
 
         StaticBody floor = new StaticBody(world, 8, 0.5f, 15.5f, 0.4f);
         StaticBody wall1 = new StaticBody(world, 1, 4.5f, 0.4f, 7);
@@ -52,7 +60,7 @@ public class Main extends ApplicationAdapter {
         for (int i = 0; i < boxes.length; i++) {
             boxes[i] = new DynamicBodyBox(world, 12, 5+i, 0.3f, 0.8f);
         }
-        /*for (int i = 0; i < triangles.length; i++) {
+        for (int i = 0; i < triangles.length; i++) {
             triangles[i] = new DynamicBodyTriangle(world, 10, 5+i, 0.5f, 0.5f);
         }
 
@@ -71,6 +79,10 @@ public class Main extends ApplicationAdapter {
         debugRenderer.render(world, camera.combined);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        batch.draw(imgColob, balls[0].getX(), balls[0].getY(),
+            balls[0].getWidth()/2, balls[0].getHeight()/2,
+            balls[0].getWidth(), balls[0].getHeight(),
+            1, 1, balls[0].getAngle());
         batch.end();
         world.step(1/60f, 6, 2);
     }
@@ -111,6 +123,11 @@ public class Main extends ApplicationAdapter {
                 }
             }
             for (DynamicBodyBox b: boxes) {
+                if(b.hit(touchDownPos)){
+                    bodyTouched = b.body;
+                }
+            }
+            for (DynamicBodyTriangle b: triangles) {
                 if(b.hit(touchDownPos)){
                     bodyTouched = b.body;
                 }
