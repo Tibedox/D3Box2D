@@ -15,7 +15,7 @@ public class DynamicBodyCircle {
     public float radius;
     public Body body;
 
-    public DynamicBodyCircle(World world, float x, float y, float radius) {
+    public DynamicBodyCircle(World world, float x, float y, float radius, String name) {
         this.x = x;
         this.y = y;
         this.radius = radius;
@@ -36,6 +36,7 @@ public class DynamicBodyCircle {
         fixtureDef.restitution = 0.6f;
 
         body.createFixture(fixtureDef);
+        body.setUserData(new StringBuilder(name));
 
         shape.dispose();
     }

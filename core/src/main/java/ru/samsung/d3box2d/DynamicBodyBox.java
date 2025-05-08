@@ -3,7 +3,6 @@ package ru.samsung.d3box2d;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -15,7 +14,7 @@ public class DynamicBodyBox {
     public float width, height;
     public Body body;
 
-    public DynamicBodyBox(World world, float x, float y, float width, float height) {
+    public DynamicBodyBox(World world, float x, float y, float width, float height, String name) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -26,9 +25,8 @@ public class DynamicBodyBox {
         bodyDef.position.set(x, y);
 
         body = world.createBody(bodyDef);
-
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width/2, height/2);
+        shape.setAsBox(width / 2, height / 2);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -37,13 +35,14 @@ public class DynamicBodyBox {
         fixtureDef.restitution = 0.2f;
 
         body.createFixture(fixtureDef);
+        body.setUserData(new StringBuilder(name));
 
         shape.dispose();
     }
 
-    public boolean hit(Vector3 t){
+    public boolean hit(Vector3 t) {
         Array<Fixture> fixtures = body.getFixtureList();
-        for(Fixture f: fixtures){
+        for (Fixture f : fixtures) {
             return f.testPoint(t.x, t.y);
         }
         return false;
